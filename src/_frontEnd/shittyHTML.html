@@ -7,13 +7,21 @@
 </head>
 <body>
 
+<div id="username_div">
+    <p>Enter your username</p>
+    <input type="text" id="username"/>
+    <button onclick="register();">Register</button>
+    <br/><br/>
+</div>
 
 <input type="text" id="chat_input"/>
-<button id="button" onclick="sendMessage();">Submit</button>
+<button onclick="sendMessage();">Submit</button>
 
-<div id="display_message"></div>
+<br/>
 
-<script src="WebClient.js"></script>
+<div id="chat_history"></div>
+
+<script src="WebChat.js"></script>
 
 </body>
 </html>
