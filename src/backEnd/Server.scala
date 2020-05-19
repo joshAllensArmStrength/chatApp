@@ -11,7 +11,9 @@ import scala.collection.mutable.ListBuffer
 class Server() {
 
   var listConnectedClients: ListBuffer[SocketIOClient] = ListBuffer()
-  var messagesSent: Map[SocketIOClient, ListBuffer[String]] = Map()
+  var clientToUsername: Map[SocketIOClient, String] = Map()
+  var usernameToClient: Map[String, SocketIOClient] = Map()
+  var messagesSent: Map[String, ListBuffer[String]] = Map()
 
   // Set up the configuration for the server, will use localhost port 8080
   val config: Configuration = new Configuration {
@@ -24,13 +26,15 @@ class Server() {
 
   // Add listeners to the server that will execute code when certain events occur
 
-  // Event 1: A client connects
+  // client connects
   server.addConnectListener(new ConnectionListener(this))
-  // Event 2: A client disconnects
+  // client disconnects
   server.addDisconnectListener(new DisconnectionListener(this))
-  // Event 3: A client sends a message of type chat_message
-  server.addEventListener("chat_message", classOf[String], new MessageListener(this))
-  // Event4: A client sends a "stop server" message
+  // client sends a "register" message
+  server.addEventListener("register", classOf[String], new RegisterUserListener(this))
+  // client sends a "direct_message" message
+  server.addEventListener("direct_message", classOf[String], new DMListener(this))
+  // client sends a "stop server" message
   server.addEventListener("stop_server", classOf[Nothing], new StopListener(this))
 
   server.start()
@@ -60,18 +64,27 @@ class DisconnectionListener(server: Server) extends DisconnectListener {
   }
 }
 
+// When someone registers
+class RegisterUserListener(server: Server) extends DataListener[String] {
+  override def onData(client: SocketIOClient, data: String, ackRequest: AckRequest): Unit = {
+    server.clientToUsername += (client -> data)
+    server.usernameToClient += (data -> client)
+    // socket.sendEvent("chat_history", server.chatHistoryJSON())
+  }
+}
+
 // Setup class for when client sends message to server
-class MessageListener(server: Server) extends DataListener[String] {
+class DMListener(server: Server) extends DataListener[String] {
   override def onData(client: SocketIOClient, data: String, ackRequest: AckRequest): Unit = {
     //println("Received message: " + data + " from " + client) // Print information about the message received
-    if(!server.messagesSent.contains(client)) { // If client hasn't sent a message into the server, add client + message sent
-      server.messagesSent += (client -> ListBuffer(data))
+    if(!server.messagesSent.contains(server.clientToUsername(client))) { // If client hasn't sent a message into the server, add client + message sent
+      server.messagesSent += (server.clientToUsername(client) -> ListBuffer(data))
     }
-    else if(server.messagesSent.contains(client)) {
-      server.messagesSent(client) += data
+    else if(server.messagesSent.contains(server.clientToUsername(client))) {
+      server.messagesSent(server.clientToUsername(client)) += data
     }
     client.sendEvent("ACK", "I received your message of: " + data) // Let client know message was received to server
-    println("Messages sent: " + server.messagesSent)
+    // println("Messages sent: " + server.messagesSent)
   }
 }
 
