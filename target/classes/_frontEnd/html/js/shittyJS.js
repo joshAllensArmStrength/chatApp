@@ -28,6 +28,8 @@ function sendMessage() {
     }
 }
 
+
+
 //socket.on('chat_history', update);
 //
 //socket.on('new_message', addMessage);
