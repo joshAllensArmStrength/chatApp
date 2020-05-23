@@ -5,6 +5,8 @@ package webSocketPractice
 // Need to import the socket.io library
 import com.corundumstudio.socketio._
 import com.corundumstudio.socketio.listener._
+import play.api.libs.json.{JsValue, Json}
+
 import scala.collection.mutable.ListBuffer
 
 
@@ -13,6 +15,7 @@ class Server() {
   var listConnectedClients: ListBuffer[SocketIOClient] = ListBuffer()
   var clientToUsername: Map[SocketIOClient, String] = Map()
   var usernameToClient: Map[String, SocketIOClient] = Map()
+  var usernameToPassword: Map[String, String] = Map()
   var messagesSent: Map[String, ListBuffer[String]] = Map()
 
   // Set up the configuration for the server, will use localhost port 8080
@@ -31,7 +34,7 @@ class Server() {
   // client disconnects
   server.addDisconnectListener(new DisconnectionListener(this))
   // client sends a "register" message
-  server.addEventListener("register", classOf[String], new RegisterUserListener(this))
+  server.addEventListener("signUp", classOf[String], new SignUpUserListener(this))
   // client sends a "direct_message" message
   server.addEventListener("direct_message", classOf[String], new DMListener(this))
   // client sends a "stop server" message
@@ -65,11 +68,18 @@ class DisconnectionListener(server: Server) extends DisconnectListener {
 }
 
 // When someone registers
-class RegisterUserListener(server: Server) extends DataListener[String] {
+class SignUpUserListener(server: Server) extends DataListener[String] {
   override def onData(client: SocketIOClient, data: String, ackRequest: AckRequest): Unit = {
-    server.clientToUsername += (client -> data)
-    server.usernameToClient += (data -> client)
-    // socket.sendEvent("chat_history", server.chatHistoryJSON())
+    // Here 'data' will be a json string in the format {"username":"someUserName","password":"somePassword"}
+    val parsed: JsValue = Json.parse(data)
+    val username: String = (parsed \ "username").as[String]
+    val password: String = (parsed \ "password").as[String]
+    server.usernameToPassword += (username -> password)
+    server.clientToUsername += (client -> username)
+    server.usernameToClient += (username -> client)
+    client.sendEvent("signed_up", username)
+    println("Server data: " + server.usernameToPassword)
+    // client.sendEvent("chat_history", server.chatHistoryJSON())
   }
 }
 

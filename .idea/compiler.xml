@@ -6,11 +6,11 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="onlyFansChat" />
+        <module name="chatApp" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="onlyFansChat" target="1.5" />
+      <module name="chatApp" target="1.5" />
     </bytecodeTargetLevel>
   </component>
 </project>

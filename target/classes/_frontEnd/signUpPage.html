@@ -2,24 +2,21 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Web Socket Client Example</title>
+    <title>Sign Up</title>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
 </head>
 <body>
-
 <div id="username_div">
-    <p>Enter your username</p>
+    <p>Username</p>
     <input type="text" id="username"/>
-    <button onclick="register();">Register</button>
-    <br/><br/>
 </div>
-
-<input type="text" id="chat_input"/>
-<button onclick="sendMessage();">Submit</button>
-
-<br/>
-
-<div id="chat_history"></div>
+<div id="password_div">
+    <p>Password</p>
+    <input type="text" id="password"/>
+</div>
+<div id="signUpButton_div">
+    <button onclick="signUp();">Sign Up</button>
+</div>
 
 <script src="shittyJS.js"></script>
 
