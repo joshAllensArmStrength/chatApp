@@ -1,7 +1,5 @@
 package backEnd
 
-package webSocketPractice
-
 // Need to import the socket.io library
 import com.corundumstudio.socketio._
 import com.corundumstudio.socketio.listener._
@@ -20,7 +18,7 @@ class Server() {
 
   // Set up the configuration for the server, will use localhost port 8080
   val config: Configuration = new Configuration {
-    setHostname("localhost") // "localhost' means run on this machine
+    setHostname("localhost") // "localhost" means run on this machine
     setPort(8080)
   }
 
@@ -37,8 +35,6 @@ class Server() {
   server.addEventListener("signUp", classOf[String], new SignUpUserListener(this))
   // client sends a "direct_message" message
   server.addEventListener("direct_message", classOf[String], new DMListener(this))
-  // client sends a "stop server" message
-  server.addEventListener("stop_server", classOf[Nothing], new StopListener(this))
 
   server.start()
 
@@ -55,7 +51,7 @@ class ConnectionListener(server: Server) extends ConnectListener {
   override def onConnect(client: SocketIOClient): Unit = {
     println("Connected: " + client) // Print a message saying the client has connected
     server.listConnectedClients += client // Add the client to the list of connected clients
-    println("Connection clients: " + server.listConnectedClients)
+    //println("Connection clients: " + server.listConnectedClients)
   }
 }
 
@@ -95,15 +91,5 @@ class DMListener(server: Server) extends DataListener[String] {
     }
     client.sendEvent("ACK", "I received your message of: " + data) // Let client know message was received to server
     // println("Messages sent: " + server.messagesSent)
-  }
-}
-
-// Setup class for when client sends stop server message
-class StopListener(server: Server) extends DataListener[Nothing] {
-  override def onData(client: SocketIOClient, data: Nothing, ackRequest: AckRequest): Unit = {
-    server.server.getBroadcastOperations.sendEvent("server_stopped")
-    println("Stopping server")
-    server.server.stop() // Stop the server
-    println("Server stopped, safe to stop program")
   }
 }
