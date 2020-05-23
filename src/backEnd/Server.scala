@@ -1,7 +1,5 @@
 package backEnd
 
-package webSocketPractice
-
 // Need to import the socket.io library
 import com.corundumstudio.socketio._
 import com.corundumstudio.socketio.listener._
@@ -20,7 +18,7 @@ class Server() {
 
   // Set up the configuration for the server, will use localhost port 8080
   val config: Configuration = new Configuration {
-    setHostname("localhost") // "localhost' means run on this machine
+    setHostname("localhost") // "localhost" means run on this machine
     setPort(8080)
   }
 
@@ -53,7 +51,7 @@ class ConnectionListener(server: Server) extends ConnectListener {
   override def onConnect(client: SocketIOClient): Unit = {
     println("Connected: " + client) // Print a message saying the client has connected
     server.listConnectedClients += client // Add the client to the list of connected clients
-    println("Connection clients: " + server.listConnectedClients)
+    //println("Connection clients: " + server.listConnectedClients)
   }
 }
 
