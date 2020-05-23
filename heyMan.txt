@@ -1,3 +1,4 @@
 {"message":"hey man","sender":"Nick"}
 {"message":"what u want","sender":"Nick"}
 {"message":"can i have some buds","sender":"Nick"}
+{"message":"fuck fuck fuck fuck","sender":"ME"}
