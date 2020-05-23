@@ -37,8 +37,6 @@ class Server() {
   server.addEventListener("signUp", classOf[String], new SignUpUserListener(this))
   // client sends a "direct_message" message
   server.addEventListener("direct_message", classOf[String], new DMListener(this))
-  // client sends a "stop server" message
-  server.addEventListener("stop_server", classOf[Nothing], new StopListener(this))
 
   server.start()
 
@@ -74,11 +72,14 @@ class SignUpUserListener(server: Server) extends DataListener[String] {
     val parsed: JsValue = Json.parse(data)
     val username: String = (parsed \ "username").as[String]
     val password: String = (parsed \ "password").as[String]
+    if(server.usernameToPassword.contains(username)) {
+      client.sendEvent("username_already_exists", "user already in database")
+    }
     server.usernameToPassword += (username -> password)
     server.clientToUsername += (client -> username)
     server.usernameToClient += (username -> client)
     client.sendEvent("signed_up", username)
-    println("Server data: " + server.usernameToPassword)
+    //println("Server data: " + server.usernameToPassword) // for testing sign ups
     // client.sendEvent("chat_history", server.chatHistoryJSON())
   }
 }
@@ -95,15 +96,5 @@ class DMListener(server: Server) extends DataListener[String] {
     }
     client.sendEvent("ACK", "I received your message of: " + data) // Let client know message was received to server
     // println("Messages sent: " + server.messagesSent)
-  }
-}
-
-// Setup class for when client sends stop server message
-class StopListener(server: Server) extends DataListener[Nothing] {
-  override def onData(client: SocketIOClient, data: Nothing, ackRequest: AckRequest): Unit = {
-    server.server.getBroadcastOperations.sendEvent("server_stopped")
-    println("Stopping server")
-    server.server.stop() // Stop the server
-    println("Server stopped, safe to stop program")
   }
 }
