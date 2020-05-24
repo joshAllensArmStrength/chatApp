@@ -33,10 +33,8 @@ class Server() {
   server.addDisconnectListener(new DisconnectionListener(this))
   // client sends a "register" message
   server.addEventListener("signUp", classOf[String], new SignUpUserListener(this))
-  // client sends a "direct_message" message
-  server.addEventListener("direct_message", classOf[String], new DMListener(this))
   // testing
-  server.addEventListener("hey_man", classOf[String], new DMListener(this))
+  server.addEventListener("hey_man", classOf[String], new HeyManListener(this))
 
   server.start()
 
@@ -80,22 +78,6 @@ class SignUpUserListener(server: Server) extends DataListener[String] {
     // client.sendEvent("chat_history", server.chatHistoryJSON())
   }
 }
-
-// Setup class for when client sends message to server
-class DMListener(server: Server) extends DataListener[String] {
-  override def onData(client: SocketIOClient, data: String, ackRequest: AckRequest): Unit = {
-    //println("Received message: " + data + " from " + client) // Print information about the message received
-    if(!server.messagesSent.contains(server.clientToUsername(client))) { // If client hasn't sent a message into the server, add client + message sent
-      server.messagesSent += (server.clientToUsername(client) -> ListBuffer(data))
-    }
-    else if(server.messagesSent.contains(server.clientToUsername(client))) {
-      server.messagesSent(server.clientToUsername(client)) += data
-    }
-    client.sendEvent("ACK", "I received your message of: " + data) // Let client know message was received to server
-    // println("Messages sent: " + server.messagesSent)
-  }
-}
-
 
 // For Testing
 class HeyManListener(server: Server) extends DataListener[String] {

@@ -1,5 +1,3 @@
-const socket = io.connect("http://localhost:8080", {transports: ['websocket']});
-
 const signUpButton = document.getElementById('signUp');
 const signInButton = document.getElementById('signIn');
 const container = document.getElementById('container');
