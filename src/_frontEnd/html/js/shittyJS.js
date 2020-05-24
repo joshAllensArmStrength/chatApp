@@ -4,11 +4,14 @@ let registered = false;
 socket.on('signed_up', congratsAlert)
 
 function signUp() {
-    let username = document.getElementById("username").value;
+    let username = document.getElementById("email").value;
     let password = document.getElementById("password").value;
+    // need to add functionality for this field
+    /* let fullName = document.getElementById("fullName").value; */
     var signUpObject = new Object();
     signUpObject.username = username;
     signUpObject.password = password;
+    /* signUpObject.fullName = fullName; */
     var jsonSignUpData = JSON.stringify(signUpObject);
 
     socket.emit("signUp", jsonSignUpData);
@@ -27,6 +30,8 @@ function sendMessage() {
         socket.emit("direct_message", message);
     }
 }
+
+
 
 //socket.on('chat_history', update);
 //

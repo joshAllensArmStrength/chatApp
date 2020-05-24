@@ -35,6 +35,8 @@ class Server() {
   server.addEventListener("signUp", classOf[String], new SignUpUserListener(this))
   // client sends a "direct_message" message
   server.addEventListener("direct_message", classOf[String], new DMListener(this))
+  // testing
+  server.addEventListener("hey_man", classOf[String], new DMListener(this))
 
   server.start()
 
@@ -94,5 +96,13 @@ class DMListener(server: Server) extends DataListener[String] {
     }
     client.sendEvent("ACK", "I received your message of: " + data) // Let client know message was received to server
     // println("Messages sent: " + server.messagesSent)
+  }
+}
+
+
+// For Testing
+class HeyManListener(server: Server) extends DataListener[String] {
+  override def onData(client: SocketIOClient, data: String, ackRequest: AckRequest): Unit = {
+    println(data)
   }
 }

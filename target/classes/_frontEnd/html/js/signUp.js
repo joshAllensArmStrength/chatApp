@@ -10,4 +10,12 @@ signUpButton.addEventListener('click', () => {
 
 signInButton.addEventListener('click', () => {
 	container.classList.remove("right-panel-active");
+<<<<<<< HEAD
 });
+=======
+});
+
+function heyMan() {
+socket.emit("hey_man", "somerandomstring");
+}
+>>>>>>> 5432e645d2dd8b7fe3e8ebbeb68951493f1f3fc7
