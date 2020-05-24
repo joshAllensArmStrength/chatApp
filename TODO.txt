@@ -3,5 +3,3 @@ TODO
 Affiliate feature - allowing content creators to get small percentages of all money spent by people who sign up using their link
 
 Photo block - allowing content creators to choose if people can send them photos or not
-
-dasdasfds
