@@ -65,17 +65,26 @@ class DisconnectionListener(server: Server) extends DisconnectListener {
 
 // When someone registers
 class SignUpUserListener(server: Server) extends DataListener[String] {
-  override def onData(client: SocketIOClient, data: String, ackRequest: AckRequest): Unit = {
+  override def onData(client: SocketIOClient, signUpData: String, ackRequest: AckRequest): Unit = {
     // Here 'data' will be a json string in the format {"username":"someUserName","password":"somePassword"}
-    val parsed: JsValue = Json.parse(data)
+    val parsed: JsValue = Json.parse(signUpData)
     val username: String = (parsed \ "username").as[String]
     val password: String = (parsed \ "password").as[String]
+    // Will need to check database to see if username is already registered under that email address
+    // Need to check username & password to make sure they are valid
     server.usernameToPassword += (username -> password)
     server.clientToUsername += (client -> username)
     server.usernameToClient += (username -> client)
-    client.sendEvent("signed_up", username)
-    println("Server data: " + server.usernameToPassword)
+    //println("Server data: " + server.usernameToPassword)
     // client.sendEvent("chat_history", server.chatHistoryJSON())
+  }
+}
+
+class LoginUserListener(server: Server) extends DataListener[String] {
+  override def onData(client: SocketIOClient, loginData: String, ackRequest: AckRequest): Unit = {
+    val parsed: JsValue = Json.parse(loginData)
+    val username: String = (parsed \ "username").as[String]
+    val password: String = (parsed \ "password").as[String]
   }
 }
 
